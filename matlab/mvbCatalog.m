@@ -18,15 +18,17 @@ function catalog = mvbCatalog(varargin)
 %       token: <weboptions object>
 %           Weboptions object containing the accesstoken. Generate this
 %           token via mvbLogin.
+%       apiurl: url to Meetnet Vlaamse Banken API.
 %
 %   Output:
 %       catalog: struct
 %           Contains overview of locations, parameters and meta-data.
 %
 %   Example:
-%   Catalog = mvbCatalog(token);
+%   Catalog = mvbCatalog('token',token);
+%   var2evalstr(Catalog);
 %
-%   See also: MVBLOGIN, MVBTABLE, MVBMAP, MVBGETDATA.
+%   See also: MVBLOGIN, MVBMAP, MVBTABLE, MVBGETDATA.
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -65,10 +67,10 @@ function catalog = mvbCatalog(varargin)
 % Created: 02 May 2019
 % Created with Matlab version: 9.5.0.1067069 (R2018b) Update 4
 
-% $Id: mvbCatalog.m 16785 2020-11-10 14:27:14Z l.w.m.roest.x $
-% $Date: 2020-11-10 15:27:14 +0100 (di, 10 nov 2020) $
+% $Id: mvbCatalog.m 17210 2021-04-23 15:21:15Z l.w.m.roest.x $
+% $Date: 2021-04-23 17:21:15 +0200 (vr, 23 apr 2021) $
 % $Author: l.w.m.roest.x $
-% $Revision: 16785 $
+% $Revision: 17210 $
 % $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/meetnetvlaamsebanken/mvbCatalog.m $
 % $Keywords: $
 

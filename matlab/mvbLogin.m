@@ -35,7 +35,7 @@ function varargout = mvbLogin(varargin);
 %   Example:
 %   token = mvbLogin('username','name@company.org','password','P4ssw0rd');
 %
-%   See also: MVBCATALOG, MVBTABLE, MVBGETDATA.
+%   See also: MVBCATALOG, MVBMAP, MVBTABLE, MVBGETDATA.
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -74,10 +74,10 @@ function varargout = mvbLogin(varargin);
 % Created: 02 May 2019
 % Created with Matlab version: 9.5.0.1067069 (R2018b) Update 4
 
-% $Id: mvbLogin.m 16785 2020-11-10 14:27:14Z l.w.m.roest.x $
-% $Date: 2020-11-10 15:27:14 +0100 (di, 10 nov 2020) $
+% $Id: mvbLogin.m 17210 2021-04-23 15:21:15Z l.w.m.roest.x $
+% $Date: 2021-04-23 17:21:15 +0200 (vr, 23 apr 2021) $
 % $Author: l.w.m.roest.x $
-% $Revision: 16785 $
+% $Revision: 17210 $
 % $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/meetnetvlaamsebanken/mvbLogin.m $
 % $Keywords: $
 
@@ -94,6 +94,10 @@ end
 % overwrite defaults with user arguments
 OPT = setproperty(OPT, varargin);
 
+%% Remove password from command window
+fprintf(1,[repmat('\b',1,1+11+length(OPT.username)+3+11+length(OPT.password)+3),'\n']);
+warning('Remove your password from the command history!')
+
 %% Login to API
 % Login to API, returns struct with token (valid for 3600 s.)
 cred=webwrite([OPT.apiurl,'/Token/'],...
@@ -103,6 +107,7 @@ cred=webwrite([OPT.apiurl,'/Token/'],...
 
 % Put token into weboptions object for further use.
 token=weboptions('HeaderFields',{'Authorization',[cred.token_type,' ',cred.access_token]});
+clear cred
 
 % Ping the API to test login success.
 response=webread([OPT.apiurl,'/V2/ping/'],token);

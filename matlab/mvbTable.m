@@ -29,7 +29,7 @@ function varargout = mvbTable(varargin)
 %   Example
 %   mvbTable(token);
 %
-%   See also: MVBLOGIN, MVBCATALOG, MVBGETDATA.
+%   See also: MVBLOGIN, MVBCATALOG, MVBMAP, MVBGETDATA.
 
 %% Copyright notice
 %   --------------------------------------------------------------------
