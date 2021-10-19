@@ -1,12 +1,12 @@
 function varargout = mvbTable(varargin)
 %MVBTABLE  Shows table of available parameters at locations.
 %
-%   mvbTable shows an overview with combinations parameters and measurement
-%   locations, for which data is available. Further, a list with the full
-%   names of these locations is presented. The order of the list is the
-%   same as the order of the codes. 
+%   mvbTable shows an overview with combinations of parameters and
+%   measurement locations, for which data is available. Further, a list
+%   with the full names of these locations is presented. The order of the
+%   list is the same as the order of the codes.
 %   Optionally the language in which the full names are presented can be
-%   changed to Dutch, French or English.
+%   changed to Dutch, French or English (default).
 %
 %   Combinations with available data can be used to request data with
 %   mvbGetData, e.g. "A2 boei" 'A2B' with "Golfhoogte - Boeien" 'GHA' -->
@@ -20,11 +20,12 @@ function varargout = mvbTable(varargin)
 %           Weboptions object containing the accesstoken. Generate this
 %           token via mvbLogin. If no token is given or invalid, the user
 %           is prompted for credentials.
-%       varargin
-%           language: string of preferred language: 'NL','FR'or 'EN'
+%       language: string of preferred language: 'NL','FR'or 'EN'
+%       catalog: catalog of all data, obtained from MVBCATALOG.
 %
 %   Output:
-%   varargout =
+%   	datatable: mask indicating data availability for location/parameter
+%           combinations.
 %
 %   Example
 %   mvbTable(token);
@@ -78,7 +79,7 @@ function varargout = mvbTable(varargin)
 %%
 OPT.apiurl='https://api.meetnetvlaamsebanken.be/V2/';
 OPT.token=weboptions;
-%OPT.catalog=nan;
+OPT.catalog=nan;
 OPT.language=3;
 
 % return defaults (aka introspection)
@@ -110,9 +111,15 @@ else
     fprintf(1,'Unknown language option "%s", using EN-GB instead. \n',OPT.language);
     OPT.language=3;
 end
-%% code
-catalog=mvbCatalog(OPT.token);
 
+if isnan(OPT.catalog)
+    % No previous catalog, fetch from server.
+    catalog=mvbCatalog(OPT.token);
+else
+    % Use previously fetched catalog.
+    catalog=OPT.catalog;
+end
+%% code
 Locations={catalog.Locations.ID};
 Parameters={catalog.Parameters.ID};
 AvailableData={catalog.AvailableData.ID};
