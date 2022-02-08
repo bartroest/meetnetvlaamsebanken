@@ -20,7 +20,8 @@ function varargout = mvbTable(varargin)
 %           Weboptions object containing the accesstoken. Generate this
 %           token via mvbLogin. If no token is given or invalid, the user
 %           is prompted for credentials.
-%       language: string of preferred language: 'NL','FR'or 'EN'
+%       language: string of preferred language: 'NL','FR' or 'EN',
+%           officially 'nl-BE', 'fr-FR' or 'en-GB'.
 %       catalog: catalog of all data, obtained from MVBCATALOG.
 %
 %   Output:
@@ -80,7 +81,7 @@ function varargout = mvbTable(varargin)
 OPT.apiurl='https://api.meetnetvlaamsebanken.be/V2/';
 OPT.token=weboptions;
 OPT.catalog=nan;
-OPT.language=3;
+OPT.language='en-GB';
 
 % return defaults (aka introspection)
 if nargin==0;
@@ -88,28 +89,29 @@ if nargin==0;
     return
 elseif odd(nargin);
     OPT.token = varargin{end}; %Assume token is the last input argument.
-%     varargin = varargin(1:end-1);
-else
-% overwrite defaults with user arguments
-OPT = setproperty(OPT, varargin);
+    varargin = varargin(1:end-1);
+end
+if length(varargin) >= 2
+    % overwrite defaults with user arguments
+    OPT = setproperty(OPT, varargin);
 end
 
 if ischar(OPT.language);
     if strncmpi(OPT.language,'NL',1);
-        OPT.language=1;
+        OPT.language='nl-BE';
     elseif strncmpi(OPT.language,'FR',1);
-        OPT.language=2;
+        OPT.language='fr-FR';
     elseif strncmpi(OPT.language,'EN',1);
-        OPT.language=3;
+        OPT.language='en-GB';
     else
-        fprintf(1,'Unknown language option "%s", using EN-GB instead. \n',OPT.language);
-        OPT.language=3;
+        fprintf(1,'Unknown language option "%s", using en-GB instead. \n',OPT.language);
+        OPT.language='en-GB';
     end
-elseif isscalar(OPT.language) && OPT.language >=1 && OPT.language <=3;
-    %Use number
+% elseif isscalar(OPT.language) && OPT.language >=1 && OPT.language <=3;
+%     %Use number
 else
-    fprintf(1,'Unknown language option "%s", using EN-GB instead. \n',OPT.language);
-    OPT.language=3;
+    fprintf(1,'Unknown language option "%s", using en-GB instead. \n',OPT.language);
+    OPT.language='en-GB';
 end
 
 if isnan(OPT.catalog)
@@ -120,15 +122,24 @@ else
     catalog=OPT.catalog;
 end
 %% code
+% Find index for locale/language.
+% Try for chosen language.
+langIdx=find(strcmpi({catalog.Locations(1).Name.Culture},{OPT.language}),1);
+% When choosen language is not available in catalog, fall back to 'en-GB'.
+if isempty(langIdx);
+    fprintf(1,'Language "%s" not available in catalog, using en-GB instead.\n',OPT.language);
+    langIdx=find(strcmpi({catalog.Locations(1).Name.Culture},{'en-GB'}),1);
+end
+
 Locations={catalog.Locations.ID};
 Parameters={catalog.Parameters.ID};
 AvailableData={catalog.AvailableData.ID};
 dataTable=false(length(Locations),length(Parameters));
 
 temp=[catalog.Locations.Name];
-LocName={temp(OPT.language,:).Message}';
+LocName={temp(langIdx,:).Message}';
 temp=[catalog.Parameters.Name];
-ParName={temp(OPT.language,:).Message}';
+ParName={temp(langIdx,:).Message}';
 
 for m=1:length(Locations);
     for n=1:length(Parameters);
