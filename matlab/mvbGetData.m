@@ -81,10 +81,10 @@ function [varargout] = mvbGetData(varargin)
 % Created: 03 May 2019
 % Created with Matlab version: 9.5.0.1067069 (R2018b) Update 4
 
-% $Id: mvbGetData.m 17315 2021-05-28 16:25:31Z l.w.m.roest.x $
-% $Date: 2021-05-28 18:25:31 +0200 (vr, 28 mei 2021) $
+% $Id: mvbGetData.m 17764 2022-02-15 08:34:29Z l.w.m.roest.x $
+% $Date: 2022-02-15 09:34:29 +0100 (di, 15 feb 2022) $
 % $Author: l.w.m.roest.x $
-% $Revision: 17315 $
+% $Revision: 17764 $
 % $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/meetnetvlaamsebanken/mvbGetData.m $
 % $Keywords: $
 
@@ -100,7 +100,7 @@ OPT.vector=true; % Output switch
 if nargin==0;
     varargout = {OPT};
     return
-elseif odd(nargin);
+elseif mod(nargin,2)==1;
     OPT.token = varargin{end}; %Assume token is the last input argument.
     varargin = varargin(1:end-1);
 end
@@ -112,7 +112,7 @@ response=webread([OPT.apiurl,'ping'],OPT.token);
 if isempty(response.Customer) %If login has expired.
     fprintf(1,['Your login token has expired or is invalid, please login using mvbLogin \n'...
         'Use the obtained token from mvbLogin in this function. \n']);
-    fprintf(1,'Trying auto-login using mvbLogin_private.m...');
+    fprintf(1,'Trying auto-login using mvbLogin_private.m... ');
     OPT.token = mvbLogin_private;
     response=webread([OPT.apiurl,'ping'],OPT.token);
     if isempty(response.Customer) %If login is invalid

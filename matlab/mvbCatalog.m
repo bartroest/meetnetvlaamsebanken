@@ -67,10 +67,10 @@ function catalog = mvbCatalog(varargin)
 % Created: 02 May 2019
 % Created with Matlab version: 9.5.0.1067069 (R2018b) Update 4
 
-% $Id: mvbCatalog.m 17210 2021-04-23 15:21:15Z l.w.m.roest.x $
-% $Date: 2021-04-23 17:21:15 +0200 (vr, 23 apr 2021) $
+% $Id: mvbCatalog.m 17764 2022-02-15 08:34:29Z l.w.m.roest.x $
+% $Date: 2022-02-15 09:34:29 +0100 (di, 15 feb 2022) $
 % $Author: l.w.m.roest.x $
-% $Revision: 17210 $
+% $Revision: 17764 $
 % $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/meetnetvlaamsebanken/mvbCatalog.m $
 % $Keywords: $
 
@@ -82,8 +82,8 @@ OPT.token=weboptions;
 if nargin==0;
     catalog = {OPT};
     return
-elseif nargin==1;
-    OPT.token=varargin{1};
+elseif mod(in,2)==1;
+    OPT.token=varargin{end};
 else
     % overwrite defaults with user arguments
     OPT = setproperty(OPT, varargin);
