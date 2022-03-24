@@ -27,6 +27,7 @@ Created on Thu Aug 22 12:52:02 2019
 import numpy as np
 import requests
 import json
+import matplotlib.pyplot as plt
 #from datetime import datetime
 
 #Default values:
@@ -69,6 +70,22 @@ def catalog(token):
     ctl=json.loads(catresponse.content)
     return ctl
 
+# #Routine to fetch the catalog of data
+# def table(token):
+#     """Plot a table with valid LocationID+ParameterID combinations"""
+#     ctl = catalog(token)
+    
+#     #Get LocationID's
+#     #Get ParameterID's
+#     #Determine intersection // Valid combinations in the catalog
+    
+    
+#     #Plot array of combinations in a nice figure.
+#     plt.figure()
+#     plt.pcolor(args, kwargs)
+    
+#     return idtable
+
 #Routine to fetch data
 def get_data(token,stationparameter,tstart,tstop):
     """Get data from the API for the requested station and time-span."""
@@ -76,8 +93,8 @@ def get_data(token,stationparameter,tstart,tstop):
     # Test login status
     pingstatus = ping(token)
     if pingstatus["Customer"] is None:
-        print("Your login token is invalid, please use login() to obtain a new" 
-              " token.\n")
+        print("Your login token is invalid or expired, please use login() to "
+              "obtain a new token.\n")
         return
     
     # Set default values
@@ -97,10 +114,9 @@ def get_data(token,stationparameter,tstart,tstop):
             t_stop = np.datetime64(tstop)
         else:
             t_stop = t_start[i+1]
-        print("Retreiving data for ID: {0} from {1} to {2}\n".format(
-                stationparameter, 
-                np.datetime_as_string(t_start[i]),
-                np.datetime_as_string(t_stop)))
+        print(f"Retreiving data for ID: {stationparameter} from "
+              + np.datetime_as_string(t_start[i]) +" to "
+              + np.datetime_as_string(t_stop) +"\n")
                 
         postdata= {"StartTime": np.datetime_as_string(t_start[i]), 
                    "EndTime": np.datetime_as_string(t_stop), 
@@ -109,19 +125,18 @@ def get_data(token,stationparameter,tstart,tstop):
                                     verify=True)
         data=json.loads(getresponse.content)
         
-        print(len(data['Values']))
+        #print(len(data["Values"]))
 
         if data["Values"] is None: 
             # When ID is not found, data.Values will be empty
-            print("Warning: empty result, ID %s not found! \n".format(
-                    stationparameter))
+            print("Warning: empty result, ID {stationparameter} not found! \n")
             continue # Station not found, terminate execution.
             
         elif data["Values"][0]["Values"] is None: 
             # When ID is found, but no data is available in the time interval, 
             # the values are empty.
-            print("ID {0} was found, but there is no data in this time"
-                  " interval.\n".format(stationparameter));
+            print("ID {stationparameter} was found, but there is no data in "
+                  "this time interval.\n");
             continue # continue to next request.
         
         else:
@@ -142,6 +157,6 @@ def get_data(token,stationparameter,tstart,tstop):
     (t, idx)=np.unique(t, return_index=True)
     v=v[idx]
 
-    return t, v, data
+    return t, v #, data
 
 #EOF
